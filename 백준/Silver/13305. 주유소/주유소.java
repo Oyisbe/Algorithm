@@ -31,24 +31,28 @@ public class Main {
             cost[i] = Integer.parseInt(st.nextToken());
         }
 
-        System.out.println(process(N,between,cost));
+        System.out.println(process(between,cost));
     }
-    public static int process(int numOfCity, int[] between, int[] cost){
 
-        int result = cost[0] * totalDistance;
-        // 만약 처음의 도시가 가장 저렴한 기름값일 수도 있는 경우를 대비하여
-        // 시작점에서 총 거리만큼 가득 넣는다. 
+    public static int process(int[] between, int[] cost) {
 
-        int compare = 0;
-        // 이후 compare 라는 변수를 통해서,
-        // 다음 도시까지의 거리 만큼 넣고, 이동한 도시에서 남은 거리만큼 전부 넣는 경우를 비교한다.
+        int result = 0;
+        int currentCost = cost[0]; // 처음에는 첫 도시의 주유소 가격으로 시작
+        int currentTotalDistance = 0; // 현재까지 이동한 거리 (누적 값)
 
-        for(int i=0; i<between.length; i++){
-            compare = cost[i] * between[i] + cost[i+1] * totalDistance - between[i];
-            // 다음 도시로 갈 수 있는 만큼만 넣고, 도착한 도시에서 남은 전체 거리만큼 기름을 채우며 계속 비교
-            if(result>compare)
-                result = compare;
+        for (int i = 0; i < between.length; i++) {
+            // 해당 구간에 대한 거리
+            int distance = between[i];
+
+            // 주유소 가격이 더 저렴하면 그 가격으로 주유
+            if (cost[i] < currentCost) {
+                currentCost = cost[i];
+            }
+
+            // 그 주유소에서 현재 구간 거리만큼 기름을 넣는다.
+            result += currentCost * distance;
         }
+
         return result;
     }
 }
