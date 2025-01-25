@@ -1,20 +1,34 @@
-import java.io.*;
-import java.math.BigInteger;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
 
 public class Main {
+
+    static final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static int N;
+    static int[] ropes;
+
     public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        int n = Integer.parseInt(br.readLine());
-        Integer[] arr = new Integer[n];
-        for (int i = 0; i < n; i++) {
-            arr[i] = Integer.parseInt(br.readLine());  //수 입력받기
+
+        N = Integer.parseInt(br.readLine());
+        ropes = new int[N];
+
+        for(int i = 0; i<=N-1;i++){
+            ropes[i] = Integer.parseInt(br.readLine());
         }
-        Arrays.sort(arr, Collections.reverseOrder());  //내림차순으로 정렬하기
-        int total = 0;
-        for (int i = 0; i < n; i++) {
-            total = Math.max(total, arr[i] * (i+1));
+
+        System.out.println(process(ropes));
+    }
+
+    public static int process(int[] ropes){
+        int max = 0;
+        Arrays.sort(ropes); // 오름 차순 정렬 -> 가장 작은 무게부터
+
+        for(int i=0;i<N;i++){
+            int current = ropes[i]*(N-i);
+            max = Math.max(max,current);
         }
-        System.out.print(total);
+        return max;
     }
 }
