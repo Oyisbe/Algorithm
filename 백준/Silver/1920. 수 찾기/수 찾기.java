@@ -1,58 +1,59 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.Arrays;
+import java.util.StringTokenizer;
 
 public class Main {
 
-    static BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    static StringTokenizer st;
+    static int N;
+    static int M;
 
-    static int numberOfNum;
-    static int numberOfSearch;
+    public static void main(String[] args) throws IOException{
 
-    public static void main(String[] args) throws IOException {
-
-        ArrayList<Integer> targets = new ArrayList<>();
-        numberOfNum = Integer.parseInt(br.readLine());
-
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        for(int i=0;i<numberOfNum;i++) {
-                targets.add(Integer.parseInt(st.nextToken()));
-        }
-
-        Collections.sort(targets); // 이진 탐색을 위한 정렬
-
-        numberOfSearch = Integer.parseInt(br.readLine());
+        N = Integer.parseInt(br.readLine());
+        int[] arr = new int[N];
 
         st = new StringTokenizer(br.readLine());
 
-        for(int i=0;i<numberOfSearch;i++) {
-            int temp = Integer.parseInt(st.nextToken());
-            binarySearch(temp,targets);
+        for(int i=0; i<N; i++){
+            arr[i] = Integer.parseInt(st.nextToken());
         }
+
+        M = Integer.parseInt(br.readLine());
+        st = new StringTokenizer(br.readLine());
+
+        StringBuilder sb = new StringBuilder();
+
+        Arrays.sort(arr);
+
+        for(int i=0;i<M;i++){
+            int input = Integer.parseInt(st.nextToken());
+            sb.append(process(arr, input)).append('\n');
+        }
+        System.out.println(sb);
     }
 
-    static void binarySearch(int target, ArrayList<Integer> list ) {
-        int startIdx = 0;
-        int endIdx = list.size()-1;
+    public static int process(int[] arr, int M){
+        
+        int low = 0;
+        int high = arr.length-1;
 
-        // [midIdx] 의 값과 비교 -> 좌측 / 우측으로 탐색 범위 한정짓고 계속 반복하기
-        // 최악의 경우 -> startIdx = endIdx 즉 하나 남을때까지 탐색하기에 (<=)
-        while(startIdx<=endIdx){
-            int midIdx = (startIdx+endIdx)/2;
+        while(low<=high){
+            int mid = low+(high-low)/2;
 
-            if(target == list.get(midIdx)) {
-                System.out.println(1);
-                return;
+            if(arr[mid]==M){
+                return 1;
             }
-            else if(target > list.get(midIdx)) {
-                startIdx = midIdx+1;
+            else if(arr[mid]<M){
+                low = mid+1;
             }
-            else{
-                endIdx = midIdx-1;
+            else if(arr[mid]>M){
+                high = mid-1;
             }
         }
-
-        System.out.println("0");
+        return 0;
     }
 }
