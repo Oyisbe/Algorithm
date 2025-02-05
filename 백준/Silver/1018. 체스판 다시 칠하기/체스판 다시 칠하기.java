@@ -1,57 +1,70 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Main {
 
     static final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    static int N, M;
+    static StringTokenizer st;
+    static int N;
+    static int M;
     static char[][] board;
 
     public static void main(String[] args) throws IOException {
-        
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        
+
+        st= new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
 
         board = new char[N][M];
 
-        // 보드 입력 받기
-        for (int i = 0; i < N; i++) {
-            board[i] = br.readLine().toCharArray();
-        }
+        int minValue = Integer.MAX_VALUE;
 
-        int minChanges = Integer.MAX_VALUE;
-
-        // 8x8 체스판 영역을 슬라이딩하면서 최소 변경 횟수 계산
-        for (int i = 0; i <= N - 8; i++) {
-            for (int j = 0; j <= M - 8; j++) {
-                int changes1 = countChanges(i, j, 'W');  // 첫 번째 칸이 W인 경우
-                int changes2 = countChanges(i, j, 'B');  // 첫 번째 칸이 B인 경우
-                minChanges = Math.min(minChanges, Math.min(changes1, changes2));
+        for(int i=0;i<N;i++){
+            String input = br.readLine();
+            for(int j=0;j<M;j++){
+                board[i][j] = input.charAt(j); // 입력 배열을 만들어주고
             }
         }
 
-        // 결과 출력
-        System.out.println(minChanges);
+        // 8 * 8 배열을 탐색하므로, 좌측 상단에서 부터 탐색을 이어갈 때 최소한으로 8칸이 남아있어야한다.
+        // 탐색이 가능한 범위(시작점)를 설정해주고 인수로 넘겨서 최소값 비교
+        for(int i=0;i<=N-8;i++){
+            for(int j=0;j<=M-8;j++){
+                minValue = Math.min(minValue, process(board,i,j));
+                // 범위마다 탐색하며 최소값을 갱신해주고
+            }
+        }
+        System.out.println(minValue);
     }
 
-    // 8x8 영역에서 시작칸 색에 맞춰 변경 횟수 계산
-    static int countChanges(int x, int y, char firstColor) {
-        char secondColor = (firstColor == 'W') ? 'B' : 'W';
-        int count = 0;
+    static int process(char[][] board, int r, int c){
+        int countW = 0; // w 로 시작하는 케이스와의 비교
+        int countB = 0; // b 로 시작하는
 
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                char expectedColor = ((i + j) % 2 == 0) ? firstColor : secondColor;
-                if (board[x + i][y + j] != expectedColor) {
-                    count++;
+        for(int i=0;i<8;i++){
+            for(int j=0;j<8;j++){
+
+                // 선택한 범위 내에서
+                // 체스판에서의 각 칸의 글자를 발견한 규칙성으로 비교
+                char current = board[i+r][j+c];
+
+                //W로 시작하는 체스판을 기준으로 한다.
+                if((i+j)%2==0){
+                    // 짝수칸의 경우 ( (i + j) % 2 == 0 )
+                    if(current!='W') countW++; // W로 시작하는 체스판에는 짝수칸에 W가 오고
+                    if(current!='B') countB++; // B로 시작하는 경우에는 B가 와야한다.
+                }
+                else
+                {
+                    // 홀수칸의 경우
+                    if(current!='B') countW++; // W로 시작 체스판에서는 B가 와야하고
+                    if(current!='W') countB++; // B로 시작하는 체스판에서는 w 가 와야한다.
                 }
             }
         }
-
-        return count;
+        // 8 x 8 범위를 탐색한 이후 최소값을 리턴해주자
+        return Math.min(countW,countB);
     }
 }
